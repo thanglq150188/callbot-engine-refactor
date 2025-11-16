@@ -155,13 +155,23 @@ class WebSocketSynchronizer:
     async def _receiver_loop(self):
         """Background task to receive messages from WebSocket"""
         logger.info(f"[{self.call_id}] WebSocket receiver loop started")
-        
+
+        message_count = 0
         try:
             while self._connected:
                 try:
-                    # Receive from WebSocket directly  
+                    # Receive from WebSocket directly
                     data = await self._websocket.receive()
-                    
+                    message_count += 1
+
+                    # Log queue size periodically
+                    queue_size = self._receive_queue.qsize()
+                    if message_count % 100 == 0:
+                        logger.info(f"[{self.call_id}] Received {message_count} messages, queue size: {queue_size}")
+
+                    if queue_size > 50:
+                        logger.warning(f"[{self.call_id}] Receive queue size is high: {queue_size} messages")
+
                     # Handle different data types properly
                     if data["type"] == "websocket.receive":
                         if "text" in data:
@@ -175,25 +185,27 @@ class WebSocketSynchronizer:
                         elif "bytes" in data:
                             await self._receive_queue.put({"bytes": data["bytes"]})
                     elif data["type"] == "websocket.disconnect":
-                        logger.warning(f"[{self.call_id}] WebSocket disconnected - ending call")
+                        logger.warning(f"[{self.call_id}] WebSocket disconnected after {message_count} messages - ending call")
                         await self._add_disconnect_message()
                         break
-                        
-                except WebSocketDisconnect:
-                    logger.info(f"[{self.call_id}] WebSocket disconnected normally")
+
+                except WebSocketDisconnect as e:
+                    logger.info(f"[{self.call_id}] WebSocket disconnected normally after {message_count} messages: {e}")
                     await self._add_disconnect_message()
                     break
                 except Exception as e:
-                    logger.error(f"[{self.call_id}] Error in receiver loop: {e}")
+                    import traceback
+                    logger.error(f"[{self.call_id}] Error in receiver loop after {message_count} messages: {e}, traceback: {traceback.format_exc()}")
                     await self._add_disconnect_message()
                     break
-                    
+
         except Exception as e:
-            logger.error(f"[{self.call_id}] Receiver loop crashed: {e}")
+            import traceback
+            logger.error(f"[{self.call_id}] Receiver loop crashed after {message_count} messages: {e}, traceback: {traceback.format_exc()}")
         finally:
             self._connected = False
             await self._set_state(WebSocketState.DISCONNECTING)
-            logger.info(f"[{self.call_id}] WebSocket receiver loop ended")
+            logger.info(f"[{self.call_id}] WebSocket receiver loop ended after processing {message_count} messages")
 
     async def _safe_send(self, message: WebSocketMessage) -> bool:
         """Safely send message via WebSocket with error handling"""

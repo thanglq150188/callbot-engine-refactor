@@ -127,10 +127,10 @@ class SimpleAudioStreamer:
 def main():
     """Main function"""
     # Configuration
-    SERVER_URL = "ws://localhost:9922"
+    SERVER_URL = "ws://localhost:9923"
     CALL_ID = "simple_test_001"
     # AUDIO_FILE = r"C:\Users\thanglq12\Documents\tmp__bz5lrw_right.wav"
-    AUDIO_FILE = r"D:\callbot-assistant\sentiment-scoring\data\QA-wave1-round1\speech_chunks\right\E_linhltn7_D_2025-10-19_H_102309_268_CLID_0387420826_611_79_YES_right_chunk_021_93570ms_94814ms.wav"  # Change to your audio file path
+    AUDIO_FILE = "/home/thanglq150188/Work/sentiment-scoring/right.wav"
     
     print("=" * 60)
     print("🎤 Simple Audio Streamer")

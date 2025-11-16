@@ -12,9 +12,9 @@ dependencies = [
     "websockets>=15.0.1",
 ]
 
-[tool.uv]
-index-url = "https://registry.aws.platform.vpbank.dev/repository/pypi-proxy/simple"
+#[tool.uv]
+#index-url = "https://registry.aws.platform.vpbank.dev/repository/pypi-proxy/simple"
 [tool.uv.sources]
-beeflow = { git = "https://git.aws.platform.vpbank.dev/bic/ds2/beeflow" }
+# beeflow = { git = "https://git.aws.platform.vpbank.dev/bic/ds2/beeflow" }
 # beeflow = { path = "C:/Users/anhnd98/workspace/beeflow-main/beeflow" }
-# beeflow = { git = "https://github.com/thanglq150188/beeflow" }
+beeflow = { git = "https://github.com/thanglq150188/beeflow" }
