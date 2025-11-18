@@ -8,7 +8,7 @@ from datetime import datetime
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-from api.websocket_utils import WebSocketSynchronizer
+from api.ws_utils import WebSocketSynchronizer
 
 
 # Configure logging
